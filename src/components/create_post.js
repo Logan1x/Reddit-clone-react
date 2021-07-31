@@ -1,23 +1,14 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { dfcontx } from "../utils/authContext";
 import firebase from "../firebasesetup";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles.css";
 
 export default function create_post() {
+  const { currentUser } = useContext(dfcontx);
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
-  var user = firebase.auth().currentUser;
-
-  var loggedIn = false;
-  var uuid = "";
-
-  if (user) {
-    loggedIn = true;
-    uuid = user.uid;
-  }
-
-  // console.log(user)
 
   var votes = 0; //default votes on the posts
 
@@ -32,7 +23,7 @@ export default function create_post() {
         title,
         content,
         votes,
-        user: uuid
+        user: currentUser.uid
       })
       .then(() => {
         setTitle("");
@@ -42,7 +33,7 @@ export default function create_post() {
 
   return (
     <div>
-      {loggedIn ? (
+      {currentUser ? (
         <section className="createpost">
           <div className="createpost-content">
             <form onSubmit={formsubmit}>
@@ -69,7 +60,9 @@ export default function create_post() {
       ) : (
         <section className="createpost">
           <div className="createpost-content">
-            <p>Please Sign-In By Visiting Auth Page.</p>
+            <p>
+              Please Sign-In By Visiting <Link to="/auth"> Auth</Link> Page.
+            </p>
           </div>
         </section>
       )}

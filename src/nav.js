@@ -1,37 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import firebase from "./firebasesetup";
+import { dfcontx } from "./utils/authContext";
 import "./styles.css";
 
 const Home = () => {
+  const { currentUser, signOut } = useContext(dfcontx);
+
   const [isActive, setActive] = useState(false);
-  const [authed, setAuthed] = useState(false);
   const toggleClass = () => {
     setActive(!isActive);
   };
-
-  const logout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(function () {
-				console.log('Sign-out successful')
-				setAuthed(false)
-      })
-      .catch(function (error) {
-        console.log('An error happened');
-      });
-  };
-  useEffect(() => {
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-      console.log("ho gya kam");
-      setAuthed(true);
-    } else {
-      console.log("ni mila");
-    }
-  }, [authed]);
 
   return (
     <div>
@@ -52,19 +30,15 @@ const Home = () => {
             <li>
               <Link to="/create">Create Post</Link>
             </li>
-            {authed ? (
-              <li onClick={logout}> logout </li>
+            {currentUser ? (
+              <li onClick={() => signOut()}>
+                <Link> logout </Link>
+              </li>
             ) : (
               <li>
                 <Link to="/auth">Login</Link>
               </li>
             )}
-            {/* <li>
-							<a href="projects.html">projects</a>
-						</li>
-						<li>
-							<a href="contact.html">contact</a>
-						</li> */}
           </ul>
         </div>
       </nav>
